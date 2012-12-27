@@ -1,60 +1,87 @@
-# P9_19 --->  SCL (TSL2561)
-# P9_20 --->  SDA (TSL2561)
-
-from time import sleep
-from termcolor import colored
 from smbus import SMBus
 
 #--------------------------------
-lux = 0.0
-TSLADDR = 0x39
-ONADDR = 0x80|0x00
+
+TSL_ADDR = 0x39
+ON_ADDR = 0x80|0x00
+
 ON = 0x03
-TIME =  0x80|0x01
-CH0LOW = 0x80|0x20|0x0C
-CH0HIGH = 0x80|0x20|0x0D
-CH1LOW = 0x80|0x20|0x0E
-CH1HIGH = 0x80|0x20|0x0F
-T1 = 0x00  # 13.7ms, scale 0.034
-T2 = 0x01  # 101ms, scale 0.252
-T3 = 0x02  # 402ms, scale 1.0 
+OFF = 0x00
+
+TSL_TIME =  0x80|0x01
+
+CH0_LOW = 0x80|0x20|0x0C
+CH0_HIGH = 0x80|0x20|0x0D
+CH1_LOW = 0x80|0x20|0x0E
+CH1_HIGH = 0x80|0x20|0x0F
+
+#Gain: x1
+GX1_T137 = 0b00000000	# 13.7ms, scale 0.034
+GX1_T101 = 0b00000001	# 101ms, scale 0.252
+GX1_T402 = 0b00000010	# 402ms, scale 1.0 
+
+#Gain: x16
+GX16_T137 = 0b00010000	# 13.7ms, scale 0.034
+GX16_T101 = 0b00010001	# 101ms, scale 0.252
+GX16_T402 = 0b00010010	# 402ms, scale 1.0 
+
+#scale: 
+SCALE_T137 = 0.034
+SCALE_T101 = 0.252
+SCALE_T402 = 1.0
+
 #--------------------------------
 
-print colored('Press CTRL+C to stop','red')
-print colored('setup: tsl2561 ....','red')
-sleep(1.0)
-
-# 3 indicates /dev/i2c-3
-bus = SMBus(3)  
-# turn on tsl2561  --> 0x03
-bus.write_byte_data(TSLADDR,ONADDR,ON) 
-#integration time : 402 ms
-bus.write_byte_data(TSLADDR,TIME,T3) 
+def setup_bus(x):
+	bus = SMBus(x)	# x indicates /dev/i2c-x
+	return bus
 
 #--------------------------------
-while(True):
-	print colored('-------------------------','cyan')
-	ch00 = bus.read_i2c_block_data(TSLADDR,CH0LOW)
-	ch01 = bus.read_i2c_block_data(TSLADDR,CH1LOW)
-	ch0 = (int(ch00[0])+256*int(ch00[1]))/2
-	ch1 = (int(ch01[0])+int(256*ch01[1]))/2
 
-	print colored('IR: {0}','red') .format(ch1)
-	print colored('Visible: {0}','red') .format(ch0-ch1)
-	print colored('Full: {0}','red') .format(ch0)	
-	#--------------------------------
-	r =float(ch1)/float(ch0)
-	print colored('CH1/CH0: {0}','red') .format(r)	
+def setup_tsl(bus,GAIN):
+	bus.write_byte_data(TSL_ADDR,ON_ADDR,ON) 
+	bus.write_byte_data(TSL_ADDR,TSL_TIME,GAIN)
+
+	if (GAIN == GX1_T137):
+		G = 1.0
+		S = SCALE_T137
+	if (GAIN == GX16_T137):
+		G = 16.0
+		S = SCALE_T137
+	#
+	if (GAIN == GX1_T101):
+		G = 1.0
+		S = SCALE_T101
+	if (GAIN == GX16_T101):
+		G = 16.0
+		S = SCALE_T101
+	#
+	if (GAIN == GX1_T402):
+		G = 1.0
+		S = SCALE_T402
+	if (GAIN == GX16_T402):
+		G = 16.0
+		S = SCALE_T402
+	return [S,G]
+
+#--------------------------------
+
+def get_lux(bus,SCALE,GAIN):
+	CH_0 = bus.read_i2c_block_data(TSL_ADDR,CH0_LOW)
+	CH_1 = bus.read_i2c_block_data(TSL_ADDR,CH1_LOW)
+	CH0 = (CH_0[0]+256*CH_0[1])/(SCALE*GAIN)
+	CH1 = (CH_1[0]+256*CH_1[1])/(SCALE*GAIN)
+	#
+	r =CH1/CH0
 	if (0<r<=0.52): 
-		lux = 0.0315*ch0-0.0593*ch0*r**1.4
+		LUX = 0.0315*CH0-0.0593*CH0*r**1.4
 	if (0.52<r<=0.65): 
-		lux = 0.0229*ch0-0.0291*ch1
+		LUX = 0.0229*CH0-0.0291*CH1
 	if (0.65<r<=0.8): 
-		lux = 0.0157*ch0-0.0180*ch1
+		LUX = 0.0157*CH0-0.0180*CH1
 	if (0.8<r<=1.3): 
-		lux = 0.00338*ch0-0.00260*ch1
+		LUX = 0.00338*CH0-0.00260*CH1
 	if (r>1.3): 
-		lux = 0.0
-	#--------------------------------
-	print colored('Lux: {0}','red') .format(lux)
-	sleep(1.0)
+		LUX = 0.0
+	#
+	return [CH0,CH1,CH0-CH1,LUX]
