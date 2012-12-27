@@ -1,5 +1,7 @@
 Python applications on Beaglebone.
 
+
+
 Adafruits's Breakout Boards: 
 
 º BMP085, Barometric Pressure/Temperature/Altitude 
@@ -16,15 +18,21 @@ Adafruits's Breakout Boards:
 
 º VCNL4000, Proximity/Light sensor
 
+
+
 Sparkfun's Breakout Boards: 
 
 º HMC6352, Compass Module
+
+
 
 Others:
 
 º GA1A2S100SS, Ambient Light Sensor
 
 º HIH-4000, Series integrated circuit humidity sensor
+
+
 
 Note:
 
