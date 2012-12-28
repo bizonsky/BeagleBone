@@ -15,11 +15,11 @@ OUT_Z_L_A = 0x2C
 OUT_Z_H_A = 0x2D
 
 
-POWER_ON = 0b10010111	# ON LSM303 ACC. and 1.344 KHz mode
-SCALE_2G = 0b00001000	# +/- 2 G scale, and HR
-SCALE_4G = 0b00011000	# +/- 4 G scale, and HR
-SCALE_8G = 0b00101000	# +/- 8 G scale, and HR
-SCALE_16G = 0b00111000	# +/-16 G scale, and HR
+POWER_ON = 0b10010111		# ON LSM303 ACC. and 1.344 KHz mode
+SCALE_A_2G = 0b00001000		# +/- 2 G scale, and HR
+SCALE_A_4G = 0b00011000		# +/- 4 G scale, and HR
+SCALE_A_8G = 0b00101000		# +/- 8 G scale, and HR
+SCALE_A_16G = 0b00111000	# +/-16 G scale, and HR
 
 #------------
 
@@ -54,12 +54,19 @@ def setup_bus(x):
 
 #--------------------------------
 
-def setup_acc(bus,SCALE,SCALE_RANGE):
-	# turn on lsm303 ACC
+def setup_acc(bus,SCALE):
 	bus.write_byte_data(LSM_ACC_ADDR,CTRL_REG1_A,POWER_ON)
-	# SCALE ACC
 	bus.write_byte_data(LSM_ACC_ADDR,CTRL_REG4_A,SCALE)
-	S =(-SCALE_RANGE/32768.0)	
+	# 
+	if(SCALE == SCALE_A_2G): 
+		S = (-2.0/32768.0)
+	if(SCALE == SCALE_A_4G): 
+		S = (-4.0/32768.0)
+	if(SCALE == SCALE_A_8G): 
+		S = (-8.0/32768.0)
+	if(SCALE == SCALE_A_16G): 
+		S = (-16.0/32768.0)
+	#
 	return S
 
 #--------------------------------
@@ -80,11 +87,26 @@ def get_acc(bus,S):
 
 #--------------------------------
 
-def setup_mag(bus,SCALE,SCALE_RANGE):
+def setup_mag(bus,SCALE):
 	bus.write_byte_data(LSM_MAG_ADDR,CRA_REG_M,DATA_RATE)
 	bus.write_byte_data(LSM_MAG_ADDR,CRB_REG_M,SCALE)
-	S = (SCALE_RANGE/32768.0)
-	bus.write_byte_data(LSM_MAG_ADDR,MR_REG_M,CONV_MODE) 
+	bus.write_byte_data(LSM_MAG_ADDR,MR_REG_M,CONV_MODE)
+	# 
+	if(SCALE == SCALE_M_13G): 
+		S = (1.3/32768.0)
+	if(SCALE == SCALE_M_19G): 
+		S = (1.9/32768.0)
+	if(SCALE == SCALE_M_25G): 
+		S = (2.5/32768.0)
+	if(SCALE == SCALE_M_40G): 
+		S = (4.0/32768.0)
+	if(SCALE == SCALE_M_47G): 
+		S = (4.7/32768.0)
+	if(SCALE == SCALE_M_56G): 
+		S = (5.6/32768.0)
+	if(SCALE == SCALE_M_81G): 
+		S = (8.1/32768.0)
+	#	
 	return S
 
 #--------------------------------
