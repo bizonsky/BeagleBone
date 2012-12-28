@@ -20,6 +20,8 @@ YOUTHIGH = 0x2B
 ZOUTLOW = 0x2C
 ZOUTHIGH = 0x2D
 
+RAD = math.pi/180.0
+
 #--------------------------------
 
 def setup_bus(x):
@@ -28,10 +30,17 @@ def setup_bus(x):
 
 #--------------------------------
 
-def setup_gyro(bus,SCALE,SCALE_RANGE):
+def setup_gyro(bus,SCALE):
 	bus.write_byte_data(L3GADDR,CTREG1,ON)
 	bus.write_byte_data(L3GADDR,CTREG4,SCALE)
-	S = SCALE_RANGE/32768.0
+	#
+	if(SCALE == DPS250):
+		S = 250.0/32768.0
+	if(SCALE == DPS500):
+		S = 500.0/32768.0
+	if(SCALE == DPS2000):
+		S = 2000.0/32768.0
+	#
 	return S
 
 #--------------------------------
@@ -49,4 +58,4 @@ def get_gyro(bus,S):
 	if(wz >= 32768 ):
 		wz = BitArray(bin(wz)).int
 
-	return [S*wx,S*wy,S*wz,(math.pi/180.0)*S*wx,(math.pi/180.0)*S*wy,(math.pi/180.0)*S*wz]
+	return [S*wx,S*wy,S*wz,RAD*S*wx,RAD*S*wy,RAD*S*wz]
