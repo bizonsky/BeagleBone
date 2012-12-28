@@ -1,3 +1,6 @@
+# P9_19 --->  SCL (LSM303DLHC)
+# P9_20 --->  SDA (LSM303DLHC)
+
 import lsm303
 from termcolor import colored
 from time import sleep
