@@ -2,14 +2,14 @@
 
 For each color:
 
-			10K				100K
+	10K				100K
 GND ------\/\/\/\-----------\/\/\/\------  VR, VG, VR --> (HDJD-S822)
-					 |
-					 |
-					 |
-					P9.39: RED
-					P9.40: GREEN
-					P9.37: BLUE
+			 |
+			 |
+			 |
+			P9.39: RED
+			P9.40: GREEN
+			P9.37: BLUE
 
 Vcc = 5.0 V (HDJD-S822)
 
