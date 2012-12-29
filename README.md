@@ -24,6 +24,7 @@ Sparkfun's Breakout Boards:
 
    º HMC6352, Compass Module
 
+   º HDJD-S822, Color Sensor Breakout
 
 
 Others:
