@@ -33,7 +33,7 @@ Others:
 
    º HIH-4000, Series integrated circuit humidity sensor
 
-
+   º 10K Precision Epoxy Thermistor - 3950 NTC	
 
 Note:
 
