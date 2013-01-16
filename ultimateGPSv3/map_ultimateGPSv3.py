@@ -3,7 +3,7 @@
 
 		2. intall: $sudo apt-get install gpsd gpsd-clients
 
-		3. download pygmaps: http://code.google.com/p/pygmaps/ 		
+		3. download pygmaps.py: http://code.google.com/p/pygmaps/ 		
 
 		4. run (root):
 
