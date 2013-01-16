@@ -43,9 +43,7 @@ while(True):
 		lat = session.fix.latitude
 		lon = session.fix.longitude
 		alt = session.fix.altitude
-		d = 0.001
 		mymap = maps(lat,lon,20)
-		mymap.addpoint(lat, lon, "#FF0000")
 		path.append((lat,lon))
 		print 'Lat:{0},  Lon:{1}, Alt:{2}' .format(lat,lon,alt)
 	#------------
